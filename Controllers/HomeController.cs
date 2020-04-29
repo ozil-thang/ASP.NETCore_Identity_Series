@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using IdentitySeries.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentitySeries.Controllers
 {
@@ -18,6 +19,7 @@ namespace IdentitySeries.Controllers
             _context = context;
         }
 
+        [Authorize]
         public async Task<IActionResult> Employees()
         {
             var employees = await _context.Employees.ToListAsync();
