@@ -3,14 +3,16 @@ using System;
 using IdentitySeries.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IdentitySeries.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20200429020812_CreatingIdentityScheme")]
+    partial class CreatingIdentityScheme
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,11 +117,6 @@ namespace IdentitySeries.Migrations
                         .HasName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new { Id = "f831a98f-b52f-4971-b3df-afabd358cb3c", ConcurrencyStamp = "ccf181e9-7e72-4e7f-971d-6ae7ce6d5bee", Name = "Visitor", NormalizedName = "VISITOR" },
-                        new { Id = "f30d700c-2802-461e-b7b5-3c71b41d34d4", ConcurrencyStamp = "1fd70b61-8521-4b7f-804b-2d05ac6f7d7f", Name = "Administrator", NormalizedName = "ADMINISTRATOR" }
-                    );
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
