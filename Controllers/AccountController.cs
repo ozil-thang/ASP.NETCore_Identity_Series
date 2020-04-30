@@ -48,9 +48,31 @@ namespace IdentitySeries.Controllers
                 }
                 return View(userModel);
             }
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { token, email = user.Email }, Request.Scheme);
+
+            var message = new Message(new string[] { user.Email }, "Confirmation email link", confirmationLink);
+            await _emailSender.SendEmailAsync(message);
+
             await _userManager.AddToRoleAsync(user, "Visitor");
 
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            return RedirectToAction(nameof(SuccessRegistration));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return View("Error");
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            return View(result.Succeeded ? nameof(ConfirmEmail) : "Error");
+        }
+
+        [HttpGet]
+        public IActionResult SuccessRegistration()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -78,7 +100,10 @@ namespace IdentitySeries.Controllers
             }
             else
             {
-                ModelState.AddModelError("", "Invalid UserName or Password");
+                if (result.IsNotAllowed)
+                    ModelState.AddModelError("", "Email not confirm");
+                else
+                    ModelState.AddModelError("", "Invalid UserName or Password");
                 return View();
             }
         }
@@ -158,6 +183,12 @@ namespace IdentitySeries.Controllers
 
         [HttpGet]
         public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Error()
         {
             return View();
         }

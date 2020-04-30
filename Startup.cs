@@ -50,6 +50,12 @@ namespace IdentitySeries
                 opt.Password.RequireUppercase = false;
             });
 
+            services.Configure<IdentityOptions>(opt =>
+            {
+                opt.User.RequireUniqueEmail = true;
+                opt.SignIn.RequireConfirmedEmail = true;
+            });
+
             services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomClaimsFactory>();
 
             services.AddAutoMapper(typeof(Startup));
