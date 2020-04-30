@@ -109,7 +109,7 @@ namespace IdentitySeries.Controllers
                 return RedirectToAction(nameof(ForgotPasswordConfirmation));
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var callback = Url.Action(nameof(ResetPassword), nameof(AccountController), new { token, email = user.Email }, Request.Scheme);
+            var callback = Url.Action(nameof(ResetPassword), "Account", new { token, email = user.Email }, Request.Scheme);
 
             var message = new Message(new string[] { forgotPasswordModel.Email }, "Reset password token", callback);
             await _emailSender.SendEmailAsync(message);

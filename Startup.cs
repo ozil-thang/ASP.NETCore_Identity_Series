@@ -40,7 +40,8 @@ namespace IdentitySeries
                 opts.UseMySql(Configuration.GetValue<string>("MysqlConnectionString")));
 
             services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationContext>();
+                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(opt =>
             {
@@ -54,6 +55,7 @@ namespace IdentitySeries
             services.AddAutoMapper(typeof(Startup));
 
             services.Configure<EmailConfiguration>(Configuration.GetSection("EmailConfiguration"));
+            services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
