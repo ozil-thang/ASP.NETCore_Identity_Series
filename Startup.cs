@@ -41,7 +41,8 @@ namespace IdentitySeries
 
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddPasswordValidator<CustomPasswordValidator<User>>();
 
             services.Configure<IdentityOptions>(opt =>
             {
@@ -55,6 +56,15 @@ namespace IdentitySeries
                 opt.User.RequireUniqueEmail = true;
                 opt.SignIn.RequireConfirmedEmail = true;
             });
+
+            services.Configure<IdentityOptions>(opt =>
+            {
+                opt.Lockout.AllowedForNewUsers = true;
+                opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+                opt.Lockout.MaxFailedAccessAttempts = 3;
+            });
+
+
 
             services.AddScoped<IUserClaimsPrincipalFactory<User>, CustomClaimsFactory>();
 

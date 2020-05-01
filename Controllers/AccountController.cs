@@ -92,20 +92,27 @@ namespace IdentitySeries.Controllers
             }
 
             var result = await _signInManager.PasswordSignInAsync(userModel.Email,
-                                userModel.Password, userModel.RememberMe, false);
+                                userModel.Password, userModel.RememberMe, true);
 
             if (result.Succeeded)
             {
                 return RedirectToLocal(returnUrl);
             }
-            else
+            if(result.IsLockedOut)
             {
-                if (result.IsNotAllowed)
-                    ModelState.AddModelError("", "Email not confirm");
-                else
-                    ModelState.AddModelError("", "Invalid UserName or Password");
-                return View();
+                var forgotPassLink = Url.Action(nameof(ForgotPassword), "Account", new {}, Request.Scheme);
+                var content = string.Format($@"Your account is locked out, to reset your password,
+                                pleas click this link: {forgotPassLink}");
+                var message = new Message(new string[] {userModel.Email}, "Locked out account information", content);
+                await _emailSender.SendEmailAsync(message);
+
+                ModelState.AddModelError("", "The account is locked out");
             }
+            if (result.IsNotAllowed)
+                ModelState.AddModelError("", "Email not confirm");
+            else
+                ModelState.AddModelError("", "Invalid UserName or Password");
+            return View();
         }
 
         [HttpPost]
